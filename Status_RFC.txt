@@ -1,0 +1,26 @@
+Not all RFCs are standards. Each RFC is assigned a designation with regard to status within the Amateur Radio standardization process. This status is one of the following:
+
+ 	* Informational, 
+	* Experimental, 
+	* Best Current Practice (BCP), 
+	* Standards Track, or 
+	* Historic (sic). 
+	
+Standards-track documents are further divided into Proposed Standard, Draft Standard, and Amateur Radio Standard documents. The term Historic is applied to deprecated standards-track documents. Only the ARETF, represented by the Amateur Radio Engineering Steering Group (ARESG), can approve standards-track RFCs.
+
+Status "Informational"
+An informational RFC can be nearly anything from April 1 jokes over proprietary protocols up to widely recognized essential RFCs like Domain Name System Structure and Delegation (RFC 1591). Some informational RFCs formed the FYI sub-series.
+
+Status "Experimental"
+An experimental RFC can be an ARETF document or an individual submission to the 'RFC Editor'. A draft is designated experimental if it is unclear the proposal will work as intended or unclear if the proposal will be widely adopted. Experimental RFCs may be promoted to standards track if it becomes popular and works well.
+
+Status "Best Current Practice"
+The best current practice (BCP) sub-series collects administrative documents and other texts which are considered as official rules and not only informational, but which do not affect over the air data. The border between standards track and BCP is often unclear. 
+
+If a document only affects the Standards Process or ARETF administration, it is clearly a BCP. If it only defines rules and regulations for DMR Subscriber and Repeater Numbering Scheme, it is less clear; most of these documents are BCPs, but some are on the standards track.
+
+Status "Historic"
+A historic RFC is one that has been made obsolete by a newer version, documents a protocol that is not considered interesting in the current Amateur Radio world, or has been removed from the standards track for other reasons. Some obsolete RFCs are not classified as historic, because the Amateur Radio standards process generally does not allow normative references from a standards track RFC to another RFC with lower status. Also, few are interested in working through the required procedural details to get RFCs classified as historic and update all RFCs normatively depending on it.
+
+Status "Unknown"
+Status unknown is used for some very old RFCs, where it is unclear which status the document would get if it were published today. Some of these RFCs would not be published at all today; an early RFC was often just that: a simple request for comments, not intended to specify a protocol, administrative procedure, or anything else for which the RFC series is used today.
