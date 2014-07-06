@@ -1,0 +1,18 @@
+Mission Statement
+
+The mission of the ARETF is to make the Amateur Radio work better by producing high quality, relevant technical documents that influence the way people design, use and operate over Amateur Radio.
+
+The ARETF will pursue this mission in adherence to the following cardinal principles:
+
+Open process - any interested person can participate in the work, know what is being decided, and make his or her voice heard on the issue. Part of this principle is our commitment to making our documents, our WG mailing lists, our attendance lists, and our meeting minutes publicly available on the Internet.
+
+Technical competence - the issues on which the ARETF produces its documents are issues where the ARETF has the competence needed to speak to them, and that the ARETF is willing to listen to technically competent input from any source. Technical competence also means that we expect ARETF output to be designed to sound network engineering principles - this is also often referred to as "engineering quality".
+
+Volunteer Core - our participants and our leadership are people who come to the ARETF because they want to do work that furthers the ARETF's mission of "making the Amateur Radio work better".
+
+Rough consensus, running code and functioning hardware - We make standards based on the combined engineering judgement of our participants and our real-world experience in implementing and deploying our specifications.
+
+Protocol ownership - when the ARETF takes ownership of a protocol or function, it accepts the responsibility for all aspects of the protocol, even though some aspects may rarely or never be seen on Amateur Radio. Conversely, when the ARETF is not responsible for a protocol or function, it does not attempt to exert control over it, even though it may at times touch or affect Amateur Radio operations.
+
+NOTE: The ARETF was model on the IETF, much of the text is taken from the IETF mission statement. 
+
