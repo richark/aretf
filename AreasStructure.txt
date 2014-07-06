@@ -1,0 +1,28 @@
+Areas
+
+The ARETF divides its work into a number of areas, each comprised of working groups that relate to that area's focus. The area structure is defined by the Amateur Radio Engineering Steering Group, and the ARESG can add areas, redefine areas, merge areas, change the number of Area Directors(AD) assigned to an area, or close down areas.
+
+Changes to the area structure affect the ARETF in many ways; decisions to change the area structure are taken in consultation with the community.
+
+When changing the area structure, the ARESG can decide which members are responsible for new and changed areas, including making one sitting AD responsible for multiple areas, but the IESG can only add new members through the nomcom process.
+
+The primary task of area management is handled by one or two Area Directors per area. An AD may be advised by one or more directorates, which are created, selected, chaired and if necessary disbanded by the AD. Directorates may be specific to an area, specific to a technology, or chartered in some other fashion.
+
+The ADs for an area are jointly responsible for making sure the WGs in the area are well coordinated, that there is coverage for the technologies needed in the area, and that the challenges most important to the Internet in that area are indeed being worked on.
+
+A full list of active working groups, sorted by area, may be found at http://www.aretf.org/wg/.
+
+The ARESG decides which areas working groups belong to. The charter of each area is listed below.
+
+Authentication (auth)
+
+Mesh-Networking (mesh)
+
+Modulation Protocols (mod)
+
+Digital Voice Codec (voice)
+
+
+
+
+
