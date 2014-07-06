@@ -1,0 +1,19 @@
+The ARETF Standards Process
+
+The basic definition of the ARETF standards process is in RFC 1000 (still to be authored). 
+ 
+<EDITOR NOTE: Address intellectual property rules, both rights of contributions and rights in technology.) 
+
+Summary:
+
+In outline, the process of creating an Amateur Radio Standard is straightforward: a specification undergoes a period of development and several iterations of review by the Amateur Radio community and revision based upon experience, is adopted as a Standard by the appropriate body... and is published. In practice, the process is more complicated, due to (1) the difficulty of creating specifications of high technical quality; (2) the need to consider the interests of all of the affected parties; (3) the importance of establishing widespread community consensus; and (4) the difficulty of evaluating the utility of a particular specification for the Internet community.
+
+The goals of the Amateur Radio Standards Process are:
+	* technical excellence;
+	* prior implementation and testing;
+	* clear, concise, and easily understood documentation;
+	* openness and fairness; and
+ 	* timeliness.
+
+... The goal of technical competence, the requirement for prior implementation and testing and the need to allow all interested parties to comment all require significant time and effort. On the other hand, today's rapid development of Amateur Radio technology demands timely development of standards. The Amateur Radio Standards Process is intended to balance these conflicting goals. The process is believed to be as short and simple as possible without sacrificing technical excellence, thorough testing before adoption of a standard, or openness and fairness.
+
