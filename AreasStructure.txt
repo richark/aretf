@@ -17,12 +17,3 @@ The ARESG decides which areas working groups belong to. The charter of each area
 Authentication (auth)
 
 Mesh-Networking (mesh)
-
-Modulation Protocols (mod)
-
-Digital Voice Codec (voice)
-
-
-
-
-
