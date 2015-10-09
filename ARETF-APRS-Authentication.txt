@@ -1,0 +1,615 @@
+
+
+
+
+Auth Working Group                                             A. Pavlin
+Internet-Draft                                                    KA2DDO
+Intended status: Experimental                               May 13, 2015
+Expires: April 14, 2015
+
+
+                      Authenticated APRS Messaging
+                        draft-apavlin-APRS-auth
+
+Abstract
+
+   This document describes a means of using HMAC digests to legally
+   authenticate clear-text messages and commands sent over Amateur
+   Radio's Automatic Packet Reporting System (APRS) radio and Internet
+   networks.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.(IETF)
+
+   Internet-Drafts are working documents of the Amateur Radio Engineering
+   Task Force (ARETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on April 14, 2015.
+
+Copyright Notice
+
+   Copyright (c) 2015 ARETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+
+Pavlin                  Expires April 14, 2015               [Page 1]
+
+Internet-Draft        Authenticated APRS Messaging              May 2015
+
+
+1.  Introduction
+
+   Although the amateur radio service is prohibited by national and
+   international law from using encryption to conceal the content of
+   amateur radio traffic, it is permitted to use publicly documented
+   codes and ciphers over radio to authenticate access for authorized
+   users to amateur radio facilities.  This document describes a means
+   of using Hashed Message Authentication Code (HMAC) digests to
+   authenticate clear-text messages and telecommand directions sent over
+   the Automatic Packet Reporting System (APRS) radio and Internet
+   networks created and maintained by the worldwide community of amateur
+   radio operators.
+
+2.  Review of the APRS Protocol
+
+   The APRS protocol [APRS101] is a common and worldwide means of
+   sending short digital messages over amateur radio, using the AX.25
+   protocol frame structure and its Carrier Sense Multiple Access-
+   Collision Detection (CSMA-CD) physical layer as a wrapper for the
+   application-level APRS packets.  APRS can also be tunneled through
+   the Internet, as implemented by the APRS-IS network of servers acting
+   as application-level routers between Internet gateway (I-gate) radio
+   stations.  The APRS packet structure itself is a short ASCII-text
+   format, where the initial character of the frame body identifies the
+   formatting and content type of the rest of the packet.  Packet
+   senders are identified with amateur radio callsigns, optionally with
+   a secondary station identifier (SSID) number.  Stations may also be
+   identified with tactical callsign aliases, as long as the sender's
+   government-issued callsign appears somewhere in the message text.
+   APRS uses flood-fill multicast transmission over shared channels so
+   that all nearby APRS receivers can hear the transmissions, thereby
+   all receiving information updates simultaneously in real-time.
+   Because there is no transport-level confirmation of successful
+   message receipt of these unreliable datagrams, APRS messages are
+   retransmitted on a periodic interval with updates to the latest state
+   of the transmitting station, such that even if some datagrams are
+   lost, the receiving stations will have reasonably up-to-date state
+   information.
+
+   APRS has been deployed for nearly 20 years, and is supported by many
+   types of stations, from conventional personal computers connected
+   through terminal-node controllers (TNCs, effectively radio modems)
+   and with readily updated software, to dedicated tracker devices and
+   commercially manufactured radio transceivers with flash ROM
+   programmed firmware.  The latter devices cause some of the
+   difficulties with APRS, as they cannot be easily upgraded to support
+   new concepts in the APRS protocol suite, and may not be implemented
+   robustly enough to survive incompatible protocol changes.  As such,
+
+
+
+Pavlin                  Expires April 14, 2015               [Page 2]
+
+Internet-Draft        Authenticated APRS Messaging              May 2015
+
+
+   APRS has a large burden of backwards compatibility, as the protocol
+   cannot be changed in ways that break these legacy stations.
+
+   The four most commonly seen messages in the APRS protocol are:
+
+   o  position reports, reporting the current location of a station by
+      latitude and longitude, with a station type and additional
+      descriptive information appended;
+
+   o  MicE position reports, using a more compact and less human-
+      readable yet still ASCII-text encoding scheme to carry the same
+      information as position reports;
+
+   o  object reports, carrying the same information as a position
+      report, but describing something that does not have a radio
+      station attached to it (such as a weather formation, navigation
+      device for other than the amateur service, etc.);
+
+   o  arbitrary short text messages, sent either to a single receiving
+      station, to a group, or to all locally listening stations.
+
+   All of these messages are limited in length not only due to the
+   maximum frame length of the AX.25 protocol, but
+
+      to keep each ASCII-text packet visible on a single line of a
+      computer display or radio control panel for ease of manual
+      decoding,
+
+      to not overload limited-capacity small microcontroller
+      implementations of APRS, and
+
+      to conserve bandwidth and reduce the probability of frame
+      collisions on amateur radio bands that restrict the maximum baud
+      rate to 9600 baud or less.
+
+3.  The APRS Text Message>
+
+   The APRS text message, described in chapter 14 of the APRS protocol
+   specification [APRS101], allows sending arbitrary short text
+   messages, similar to cellphone texting.  The format of a APRS text
+   message is:
+
+   +---+-----------+---+------------------------------+---+------------+
+   | 1 |     9     | 1 |   1 to 67 characters         | 1 |     1-5    |
+   +---+-----------+---+------------------------------+---+------------+
+   | : | addressee | : | variable length message text | { | message no |
+   +---+-----------+---+------------------------------+---+------------+
+
+
+
+
+Pavlin                  Expires April 14, 2015               [Page 3]
+
+Internet-Draft        Authenticated APRS Messaging              May 2015
+
+
+   where the literal colon characters at the 1st and 11th positions
+   identify the message type as a text message and delimit the end of
+   the space-padded addressee's identifier, and the trailing literal
+   curly brace and message "number" string are optional and used to
+   identify a specific message from the originating station (identified
+   outside the message body in the wrapping frame structure) so that the
+   receiving station can acknowledge receipt, using a responding APRS
+   text message addressed to the sending station with the message text
+   being the reserved pattern "ack" followed immediately by only the
+   message "number" string of the original message; "ack" messages
+   cannot have message numbers of their own.  This provides a limited
+   form of application level transmission confirmation to improve
+   reliability of text messages, allowing retransmission of dropped
+   messages without wasting channel bandwidth retransmitting messages
+   that have been already successfully received.
+
+   Given this limited message size, and the fact that the shared radio
+   channel does not provide reliability, privacy, nor authentication (a
+   "pirate" station could transmit using another station's identifier),
+   there is a challenge in providing authentication while remaining
+   fully backwards-compatible with the existing APRS infrastructure.
+
+4.  Theory for Authentication
+
+   Digitally signing each message (and including the signature in the
+   same APRS message datagram) would seem to be the obvious solution.
+   However, conventional Internet signature schemes create a signature
+   whose binary length is longer than the maximum text body character
+   length of an APRS text message.  To still have a reasonable-sized
+   payload in the APRS message, the signature (after encoding into 7-bit
+   ASCII text, to be compatible with all legacy stations) would need to
+   be less than half the maximum message text length.  As such, a
+   simpler solution is needed.
+
+   Message digests provide reliability to messages similar to checksums
+   by providing a hash that could only come from the original message or
+   a very few radically different messages, none of which could be
+   reverse-engineered from the digest or hash.  The common signature
+   schemes use this technique, adding an encryption key to the message
+   data to be digested, such that the hash could not be re-calculated
+   without knowing both the original message text and the key (which is
+   not transmitted in-the-clear with the message text).  Some signature
+   schemes are based on private-public key pairs, and bundle the public
+   key into the signature, radically increasing its size.
+
+   However, if the key is a secret key known to both the sender and
+   receiver and identified by the sending station's identification, that
+   identification would not need to be included in the signature, since
+
+
+
+Pavlin                  Expires April 14, 2015               [Page 4]
+
+Internet-Draft        Authenticated APRS Messaging              May 2015
+
+
+   the sending station's identification is already in the message
+   wrapper.  This is the technique used by Hashed Message Authentication
+   Codes.
+
+   If such text messages are used to send telecommand directives to the
+   receiving station, there is another risk that a man-in-the-middle
+   (MITM) attack could occur by later replaying a recorded command and
+   spoofing the sending station's identification.  This can be solved by
+   timestamping the message and including the timestamp in the text to
+   be digested.  Because APRS is a real-time network, we can assume the
+   message needs to be processed immediately upon receipt and does not
+   need the timestamp explicitly in the clear-text; the receiving
+   station can assume "now" as the time.  The timestamp does have to be
+   quantized broadly enough to allow for propagation delay in the
+   network, but not so broadly that an attacker would have time to issue
+   a spoofed MITM replay attack.
+
+5.  Implementation
+
+   The proposed implementation for transmission is:
+
+   1.  At the time of original transmission, the APRS text message does
+       not yet contain a signature.  A Hashed Message Authentication
+       Code-Message Digest 5 [HMAC-MD5] engine is initialized with a
+       secret key known to both the originating and receiving stations,
+       and then fed the following items (in this order) in a byte
+       stream:
+
+       1.  The current time, in minutes since the Unix epoch of January
+           1st, 1970, at the UTC time of midnight, written as a 32-bit
+           unsigned integer in network (high byte first) order.  Note
+           that the time is always truncated to the last whole minute,
+           not rounded up if in the last 30 seconds of the minute.
+
+       2.  The originating callsign in 7-bit ASCII text.  If a SSID
+           suffix is present that does not have the value zero, it is
+           appended as the ASCII hyphen character (hexadecimal byte 2D)
+           followed by the numeric suffix in decimal ASCII digits.  Note
+           that some extended APRS identifiers that are not transmitted
+           over AX.25 can use SSID values that are not in the range 0 to
+           15 nor even just numeric; those suffixes can be transmitted
+           in their corresponding ASCII characters.
+
+       3.  The ASCII greater-than sign ">" (hexadecimal byte 3E).
+
+       4.  The addressee field from the APRS text message (without
+           trailing spaces).
+
+
+
+
+Pavlin                  Expires April 14, 2015               [Page 5]
+
+Internet-Draft        Authenticated APRS Messaging              May 2015
+
+
+       5.  The ASCII colon character ":" (hexadecimal byte 3A).
+
+       6.  The text body of the message (not including the message
+           sequence number).
+
+   2.  The resulting digest is obtained from the engine and encoded
+       using the basic ASCII-85 [ASCII85] encoding scheme into printable
+       ASCII characters.
+
+   3.  The APRS text message is modified to insert the following
+       characters after the message body text and before any message
+       sequence number:
+
+       1.  The ASCII backslash character "\" (hexadecimal byte 5C).
+
+       2.  The ASCII upper case letter "S" (hexadecimal byte 53).
+
+       3.  The ASCII-85 encoded hash.
+
+       No extra delimiting characters are inserted before or after the
+       above signature encoding.
+
+   The proposed implementation for reception is:
+
+   1.  All incoming APRS messages are associated with their time of
+       reception.
+
+   2.  If an APRS text message is received that has the following
+       characteristics:
+
+       *  A body longer than 7 characters (not counting any message
+          sequence "number");
+
+       *  The body ending with the literal characters "\S" (hexadecimal
+          bytes 5C and 53) followed by 4 to 20 non-blank printable
+          characters that ASCII-85 decode into a valid 16-byte value.
+
+       it is assumed to have an HMAC signature per the above
+       transmission logic.
+
+   3.  The key corresponding to the originating station (Section 6) is
+       obtained and the HMAC-MD5 authentication code is recomputed using
+       the receive time in minutes since the Unix epoch.  The
+       transmitter's signature (starting at the "\S") is NOT included in
+       the receiver's HMAC computation.
+
+   4.  If the hashes do not match, the computation is repeated using a
+       timestamp one minute earlier than the receive time, under the
+
+
+
+Pavlin                  Expires April 14, 2015               [Page 6]
+
+Internet-Draft        Authenticated APRS Messaging              May 2015
+
+
+       assumption that the originator either sent the message just
+       barely before the start of the next minute, or that there was
+       some propagation delay in sending the message.
+
+   5.  If neither hash matches, but there are other keys associated with
+       the originating station, the HMAC computation repeats with each
+       candidate key at the current and previous minutes until either a
+       match is found or no more suitable keys are available.
+
+   If the receiving station does not have any keys that are associated
+   with the originating station, the signed message is considered
+   unverified and treated the same as an unsigned message.  If the
+   receiving station has at least one key for the originating station,
+   but none of the keys produce a matching hash, the message is assumed
+   to be corrupted, forged, or replayed, and is treated as an error
+   condition.  In particular, telecommand applications should not
+   process messages that do not have valid verified signatures; whether
+   to log messages with invalid signatures is a design decision for the
+   receiving application.
+
+6.  Key Management
+
+   Because the APRS network is a shared communication channel with many
+   stations on it, each conducting different independent operations, it
+   is entirely possible that one station may need to know more than one
+   key for different functions, such as:
+
+   o  authenticated point-to-point messaging,
+
+   o  telecommand,
+
+   o  identity-verified nets (in the amateur radio sense),
+
+   o  any other use for transmitting station authentication the end-user
+      can come up with.
+
+   As such, this algorithm proposes a logical keystore kept at each
+   originating and receiving station using this authentication scheme.
+   The keystore can contain multiple secret keys; each key is associated
+   with zero or more other stations' identifiers (callsign-SSID), and
+   possibly a group multicast identifier.  A key's association list can
+   only contain only a group multicast identifier if no other station
+   uses the same group identifier to send messages back to the
+   originating station (i.e., broadcast announcements).
+
+   At transmission time, the originating station looks at the addressee
+   of the message, and sees if there are any keys associated with that
+   addressee.  If more than one key is associated, a tie-breaking
+
+
+
+Pavlin                  Expires April 14, 2015               [Page 7]
+
+Internet-Draft        Authenticated APRS Messaging              May 2015
+
+
+   algorithm is needed.  As a proposed tie-breaker, if the addressee is
+   a single station (and not a multicast group), keys that are also
+   associated with multicast groups should not be considered as
+   candidates for transmission signing; such keys should only be used
+   for signing if the addressee is the entire group.  If there are still
+   multiple keys, the tie-breaker algorithm is TBD, but is proposed to
+   be a direct query of the human user.  Answers to such queries can be
+   cached for future transmissions to the same addressee by the same
+   originating station.
+
+   At reception time, the receiving station looks for all keys
+   associated with the originating station's identifier (not by the
+   addressee).  By having all authorized originating stations in the
+   list for a group multicast identifier, this will confirm that the
+   claimed sending station both:
+
+   1.  actually does have the key to sign the message, and
+
+   2.  is a member of the group (at least, as known by the receiving
+       station).
+
+   Note that the second claim will only be verifiable if the receiving
+   station confirms the signing key was associated with the group as
+   well as with the originating station.
+
+   This specification explicitly does NOT specify how secret keys are
+   shared between stations, but expects that they will be transmitted
+   over channels other than amateur radio, such that the keys remain
+   secure, thereby preventing any "pirate" station from claiming the
+   identity of a trusted station and being able to successfully sign
+   messages with keys known to that trusted station.
+
+7.  Design Justifications
+
+   This implementation specifically does not follow the replay
+   protection format proposed in Internet RFC 2085 [RFC2085], as it is
+   highly possible for messages to be lost in the high-collision
+   environment of hidden transmitters on the APRS RF networks, so
+   correctly updating a sequence number on both ends of the lossy
+   channel would be nearly impossible.  Hence, only the timestamp is
+   used for replay protection, not an additional signing-sequence-
+   specific sequence number.
+
+   Quantizing the timestamp to one-minute resolution and using local
+   system time at both ends was considered reasonable because
+
+
+
+
+
+
+Pavlin                  Expires April 14, 2015               [Page 8]
+
+Internet-Draft        Authenticated APRS Messaging              May 2015
+
+
+   1.  almost all mobile APRS stations are using readily available GPS
+       receivers, which can provide accurate time (less than 1 second
+       error at the APRS application level) as well as position.
+
+   2.  fixed APRS stations that do not have GPS most likely have access
+       to the Internet, and can therefore use publicly available Network
+       Time Protocol (NTP) servers to synchronize their system clock to
+       under a second of error as well.
+
+   3.  a typical APRS frame can be transmitted in under a second on most
+       channels (once the channel is clear), so, even with 8 digipeats
+       (the theoretical maximum amount of RF repeating, which is
+       generally discouraged in conventional APRS usage), a signed frame
+       should arrive at the most distant receiving station in under a
+       minute if it is going to arrive at all (i.e., not lost in
+       collisions).
+
+   4.  it minimizes the number of signature recalculations needed at the
+       receiving station for message delivery spanning a quantization
+       boundary.
+
+   5.  overflow of the 32-bit time value will not happen for several
+       centuries, and the originating and receiving stations won't care
+       anyway since they only care about one value and its immediate
+       predecessor for any given signed message, so time value wrapping
+       won't break the algorithm (even if it is still being used in
+       several centuries).
+
+   6.  retransmissions due to lost acknowledgements of numbered messages
+       in a telecommand scenario should be harmless, as most
+       telecommands are orders for the commanded system to change its
+       state, hence being told to change to the same state again within
+       a minute should effectively be no change at all.  Telecommands
+       that do not cause state changes should be completely harmless.
+
+   7.  Well-behaved APRS digipeaters and I-gates filter out excessively
+       frequent duplicate messages, so a retransmission (or replay
+       attack) within the 1 to 2 minute window will likely be discarded
+       by the relay stations anyway, and a later explicit retransmission
+       will have a different signature for its new transmission
+       timestamp.
+
+   The letter 'S' following the backslash was not only to indicate that
+   part of the message body was a signature, but that it was using the
+   specific HMAC digest algorithm of MD5 specified in this document.
+   Other printable characters could be used here, theoretically allowing
+   up to 89 alternate algorithms in future revisions of this
+   specification.  Fewer choices are practically available, since the
+
+
+
+Pavlin                  Expires April 14, 2015               [Page 9]
+
+Internet-Draft        Authenticated APRS Messaging              May 2015
+
+
+   backslash character could appear in the normal message text; a two-
+   character combination using an unlikely punctuation mark plus a
+   limited number of following characters with no whitespace was chosen
+   to reduce the chance of an arbitrary text message appearing to be
+   signed when it was not.
+
+   Ascii-85 encoding was chosen instead of the base-91 encoding used
+   elsewhere in APRS
+
+   1.  to ensure reserved printable characters (such as the left curly
+       brace used to delimit the message sequence number) did not appear
+       in the encoded hash,
+
+   2.  base-91 would not produce an encoded string with any fewer
+       characters than Ascii-85 would with only 16 bytes of binary data,
+
+   3.  Ascii-85 does allow for some compression in rare cases to make
+       the signature a character or two shorter,
+
+   4.  Ascii-85 was more straightforward in converting binary to ASCII
+       and back,
+
+   5.  Ascii-85 fit the length of the hash more conveniently, avoiding
+       issues with leftover bits at decode time.
+
+   The message originating station is specifically called out rather
+   than the transmitting station, as a signed message could be relayed
+   through the APRS-IS and forwarded to RF by a transmitting I-gate
+   station.  Such a retransmission would have the callsign of the I-gate
+   (not the originating station) in the AX.25 frame sender field.
+   Therefore, receiving stations implementing this algorithm must be
+   aware of this, and search any APRS third-party headers (as documented
+   in chapter 17 of the APRS protocol specification) for the true
+   originating station's callsign-SSID.
+
+8.  Security Considerations
+
+   The security and reliability of this algorithm is based on the
+   strength of MD5, the synchronization of originating and receiving
+   station clocks, the correctness of the algorithm implementation and
+   the application using the results of the algorithm, the security of
+   key management and distribution, and the strength of the keys used.
+
+   Message Digest 5 [MD5] is not the strongest available hash algorithm,
+   as documented in RFC 2104 [HMAC-MD5].  However, it has the shortest
+   digest length of any reasonable hash algorithm.  Given that APRS is
+   commonly going over communications channels that cannot typically
+   exceed 1 packet per second, brute force attacks would take an
+
+
+
+Pavlin                  Expires April 14, 2015              [Page 10]
+
+Internet-Draft        Authenticated APRS Messaging              May 2015
+
+
+   unreasonably long time and would likely be detected by the outraged
+   amateur radio community long before the attacker successfully
+   reverse-engineered a key, or at least before the attacker was able to
+   cause much damage.
+
+9.  References
+
+   [APRS101]  Wade, I., "APRS Protocol Reference, Protocol Version 1.0",
+              August 2000.
+
+   [ASCII85]  Wikipedia, "Ascii85", May 2015.
+
+   [HMAC-MD5]
+              Krawczyk, H., Bellare, M., and R. Canetti, "HMAC: Keyed-
+              Hashing for Message Authentication", RFC 2104, February
+              1997.
+
+   [MD5]      Rivest, R., "The MD5 Message-Digest Algorithm", RFC 1321,
+              April 1992.
+
+   [RFC2085]  Oehler, M. and R. Glenn, "HMAC-MD5 IP Authentication with
+              Replay Prevention", RFC 2085, February 1997.
+
+Author's Address
+
+   Andrew C. Pavlin
+   KA2DDO
+
+   Email: ka2ddo@arrl.net
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pavlin                  Expires April 14, 2015              [Page 11]
