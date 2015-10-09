@@ -5,7 +5,7 @@
 Auth Working Group                                             A. Pavlin
 Internet-Draft                                                    KA2DDO
 Intended status: Experimental                               May 13, 2015
-Expires: April 14, 2015
+Expires: April 14, 2016
 
 
                       Authenticated APRS Messaging
@@ -32,7 +32,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on April 14, 2015.
+   This Internet-Draft will expire on April 14, 2016.
 
 Copyright Notice
 
@@ -52,7 +52,7 @@ Copyright Notice
 
 
 
-Pavlin                  Expires April 14, 2015               [Page 1]
+Pavlin                  Expires April 14, 2016               [Page 1]
 
 Internet-Draft        Authenticated APRS Messaging              May 2015
 
@@ -108,7 +108,7 @@ Internet-Draft        Authenticated APRS Messaging              May 2015
 
 
 
-Pavlin                  Expires April 14, 2015               [Page 2]
+Pavlin                  Expires April 14, 2016               [Page 2]
 
 Internet-Draft        Authenticated APRS Messaging              May 2015
 
@@ -164,7 +164,7 @@ Internet-Draft        Authenticated APRS Messaging              May 2015
 
 
 
-Pavlin                  Expires April 14, 2015               [Page 3]
+Pavlin                  Expires April 14, 2016               [Page 3]
 
 Internet-Draft        Authenticated APRS Messaging              May 2015
 
@@ -220,7 +220,7 @@ Internet-Draft        Authenticated APRS Messaging              May 2015
 
 
 
-Pavlin                  Expires April 14, 2015               [Page 4]
+Pavlin                  Expires April 14, 2016               [Page 4]
 
 Internet-Draft        Authenticated APRS Messaging              May 2015
 
@@ -276,7 +276,7 @@ Internet-Draft        Authenticated APRS Messaging              May 2015
 
 
 
-Pavlin                  Expires April 14, 2015               [Page 5]
+Pavlin                  Expires April 14, 2016               [Page 5]
 
 Internet-Draft        Authenticated APRS Messaging              May 2015
 
@@ -332,7 +332,7 @@ Internet-Draft        Authenticated APRS Messaging              May 2015
 
 
 
-Pavlin                  Expires April 14, 2015               [Page 6]
+Pavlin                  Expires April 14, 2016               [Page 6]
 
 Internet-Draft        Authenticated APRS Messaging              May 2015
 
@@ -388,7 +388,7 @@ Internet-Draft        Authenticated APRS Messaging              May 2015
 
 
 
-Pavlin                  Expires April 14, 2015               [Page 7]
+Pavlin                  Expires April 14, 2016               [Page 7]
 
 Internet-Draft        Authenticated APRS Messaging              May 2015
 
@@ -444,7 +444,7 @@ Internet-Draft        Authenticated APRS Messaging              May 2015
 
 
 
-Pavlin                  Expires April 14, 2015               [Page 8]
+Pavlin                  Expires April 14, 2016               [Page 8]
 
 Internet-Draft        Authenticated APRS Messaging              May 2015
 
@@ -500,7 +500,7 @@ Internet-Draft        Authenticated APRS Messaging              May 2015
 
 
 
-Pavlin                  Expires April 14, 2015               [Page 9]
+Pavlin                  Expires April 14, 2016               [Page 9]
 
 Internet-Draft        Authenticated APRS Messaging              May 2015
 
@@ -556,7 +556,7 @@ Internet-Draft        Authenticated APRS Messaging              May 2015
 
 
 
-Pavlin                  Expires April 14, 2015              [Page 10]
+Pavlin                  Expires April 14, 2016              [Page 10]
 
 Internet-Draft        Authenticated APRS Messaging              May 2015
 
@@ -612,4 +612,4 @@ Author's Address
 
 
 
-Pavlin                  Expires April 14, 2015              [Page 11]
+Pavlin                  Expires April 14, 2016              [Page 11]
